@@ -7,11 +7,11 @@ require_relative 'adapters/adapter'
 class Coordinator < Sinatra::Base
   Dotenv.load
 
-  mockup_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+  mockup_token = ENV['WHITELISTED_API_KEY']
 
   # API
   get '/search' do
-    if env['HTTP_AUTHORIZATION'] && env['HTTP_AUTHORIZATION'].split(':').last.strip == mockup_token
+    if env['HTTP_AUTHORIZATION'] && env['HTTP_AUTHORIZATION'].split(' ').last.strip == mockup_token
       unless params[:address]
         error = {errors: [message: 'Please provide a geocodable search query (e.g. an address)']}
         halt 400, {'Content-Type' => 'application/json'}, error.to_json

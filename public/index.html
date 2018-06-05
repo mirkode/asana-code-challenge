@@ -160,7 +160,7 @@
                         method: 'GET',
                         url: '/search?' + address,
                         beforeSend: function (xhr) {
-                            xhr.setRequestHeader('Authorization', 'Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c')
+                            xhr.setRequestHeader('Authorization', 'Basic ' + btoa('johndoe:password1234'))
                         },
                         statusCode: {
                             200: function (data) {
