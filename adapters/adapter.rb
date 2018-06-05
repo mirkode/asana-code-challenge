@@ -51,7 +51,7 @@ class Adapter
 
     def api_call(method, path, data = nil)
       result = self.class.send(method, parsed_url(path), body: data&.to_json || '')
-      raise GeoCodingError.new("HTTP Error #{result.code}, Path: #{result.request.path}, Response: #{result.body}") unless [200, 201].include?(result.code)
+      raise GeoCodingError.new("HTTP Error #{result.code}, Path: #{result.request.path}, Response: #{result.body}") unless [200].include?(result.code)
       {
         status: result.code,
         body: JSON.parse(result.body)
