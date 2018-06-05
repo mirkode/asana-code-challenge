@@ -122,7 +122,9 @@ e.g. `GOOGLE_API_KEY` = Your Google Maps API key
 Fire up the app in the `asana-code-challenge` directory by entering
 `rackup -p 4567` (or any other port you need)
 
-7. Access
+7. Add Google aps API key to `index.html`
+
+8. Access
 In a browser open up `http://localhost:4567/`
 
 ## Request
