@@ -158,6 +158,9 @@
                     $.ajax({
                         method: 'GET',
                         url: '/search?' + address,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', 'Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c')
+                        },
                         statusCode: {
                             200: function (data) {
                                 showResults(data);
@@ -167,12 +170,12 @@
                                 $error.html('<strong>HTTP Status 400</strong> ' + data.responseJSON.errors[0].message);
                                 $error.show();
                             },
-                            404: function (data) {
-                                $error.html('<strong>HTTP Status 404</strong> ' + data.responseJSON.errors[0].message);
+                            401: function (data) {
+                                $error.html('<strong>HTTP Status 401</strong> ' + data.responseJSON.errors[0].message);
                                 $error.show();
                             },
                             500: function (data) {
-                                $error.html('<strong>HTTP Status 500</strong> ' + data.responseJSON.errors[0].message);
+                                $error.html('<strong>HTTP Status 500</strong> Internal Server Error.');
                                 $error.show();
                             }
                         }
