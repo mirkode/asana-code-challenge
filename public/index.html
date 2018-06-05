@@ -1,0 +1,215 @@
+<html>
+<head>
+    <title>Coordinat0r Demo Page</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+     html, body {
+         font-family: Helvetica, Arial, sans-serif;
+         margin: 0;
+         padding: 0;
+     }
+     #map-container {
+         height: 100vh;
+         position: relative;
+         width: 100%;
+     }
+     #map-container #map {
+         height: 100%;
+         position: absolute;
+         width: 100%;
+         z-index: 0;
+     }
+     #map-container #form-container {
+         background: rgba(255, 255, 255, 1);
+         display: block;
+         height: auto;
+         min-height: 20vh;
+         right: 3%;
+         padding: 20px;
+         position: absolute;
+         top: 1%;
+         width: 25%;
+         z-index: 1;
+     }
+     #map-container #form-container #address-form input[type=text] {
+         border: 2px solid #2d2d2d;
+         font-weight: 700;
+         margin: 15px 0;
+         padding: 15px;
+         height: 30px;
+         width: 100%;
+     }
+     #map-container #form-container #address-form input[type=submit] {
+         background: #fff;
+         border: 2px solid #2d2d2d;
+         cursor: pointer;
+         font-weight: 700;
+         padding: 15px 25px;
+         text-transform: uppercase;
+         transition: all .3s;
+     }
+     #map-container #form-container #address-form input[type=submit]:hover {
+         background: #2d2d2d;
+         color: #fff;
+     }
+     #map-container #form-container #address-form input[type=submit]:disabled {
+         background: #fff;
+         border: 2px solid #d2d2d2;
+         color: #d2d2d2;
+     }
+     #map-container #form-container #status {
+         display: none;
+     }
+     #map-container #form-container #status h2 {
+         font-size: 16px;
+     }
+     #map-container #form-container #error {
+         color: #f00;
+         font-size: 12px;
+         display: none;
+     }
+     #map-container #form-container #error .code {
+         font-weight: 700;
+     }
+     #map-container #form-container #status .results {
+         font-size: 12px;
+     }
+     #map-container #form-container #status .results .count {
+         font-size: 14px;
+         font-weight: 700;
+     }
+     #map-container #form-container #status #search-results {
+         list-style-type: none;
+         margin: 10px 0;
+         padding: 0;
+     }
+     #map-container #form-container #status #search-results li {
+         border-bottom: 1px solid #2d2d2d;
+         margin: 5px 0;
+     }
+     #map-container #form-container #status #search-results li p {
+         font-size: 12px;
+         margin: 2px;
+     }
+     #map-container #form-container #status #code-view {
+         width: 100%;
+         white-space: normal;
+         overflow: hidden;
+         font-size: 12px;
+     }
+    </style>
+</head>
+<body>
+    <div id="map-container">
+        <div id="map"></div>
+        <div id="form-container">
+            <form id="address-form">
+                <label for="address">Please enter your address in the field below.</label>
+                <input type="text" name="address" placeholder="What are you looking for?" required />
+                <input type="submit" value="Geocode" />
+            </form>
+            <div id="error">
+                <p>Something went wrong!</p>
+            </div>
+            <div id="status">
+                <h2>Results</h2>
+                <p class="results">Found <span class="count">0</span> results.</p>
+                <ul id="search-results"></ul>
+                <h3>API Response</h3>
+                <pre id="code-view"></pre>
+            </div>
+        </div>
+    </div>
+    <script>
+        var map, marker = null;
+
+        function initMap() {
+            var initial = {lat:52.501085, lng: 13.391433};
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 16,
+                center: initial
+            });
+            marker = new google.maps.Marker({
+                position: initial,
+                map: map
+            });
+         }
+    </script>
+    <!-- ADD GOOGLE MAPS API KEY HERe -->
+    <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&callback=initMap"> -->
+    </script>
+    <script>
+        var Coordinator = (function () {
+            var $button = $('#address-form input[type=submit]');
+            var address;
+            var parsedData, coordinates, currentPosition;
+            var $status = $('#status'),
+                $results = $('#search-results'),
+                $code = $('#code-view'),
+                $count = $('#status .count');
+                $error = $('#error');
+
+            var init = function () {
+                $('#address-form').on('submit', function (e) {
+                    e.preventDefault();
+                    $button.attr('disabled', true);
+                    address = $(this).serialize();
+
+                    $.ajax({
+                        method: 'GET',
+                        url: '/search?' + address,
+                        statusCode: {
+                            200: function (data) {
+                                showResults(data);
+                            },
+                            // TODO: Use .fail etc.
+                            400: function (data) {
+                                $error.html('<strong>HTTP Status 400</strong> ' + data.responseJSON.errors[0].message);
+                                $error.show();
+                            },
+                            404: function (data) {
+                                $error.html('<strong>HTTP Status 404</strong> ' + data.responseJSON.errors[0].message);
+                                $error.show();
+                            },
+                            500: function (data) {
+                                $error.html('<strong>HTTP Status 500</strong> ' + data.responseJSON.errors[0].message);
+                                $error.show();
+                            }
+                        }
+                    });
+                });
+            };
+
+            var showResults = function (data) {
+                parsedData = JSON.parse(data)
+                coordinates = parsedData.coordinates[0];
+                currentPosition = {lat: coordinates.latitude, lng: coordinates.longitude};
+
+                $button.attr('disabled', false);
+                $count.html(parsedData.coordinates.length);
+                $results.html('');
+                $.each(parsedData.coordinates, function(index, dataset) {
+                    var element = '<li>';
+                    element += '<p>Latitude: ' + dataset.latitude + '</p>';
+                    element += '<p>Longitude: ' + dataset.longitude + '</p>';
+                    element += '<p>Formatted Address:<br>' + dataset.formatted + '</p>';
+                    element += '</li>';
+                    $results.append(element);
+                });
+                $code.text(data);
+
+                $status.fadeIn('slow');
+                map.setCenter(currentPosition);
+                marker.setPosition(currentPosition);
+            };
+
+            return {
+                init: init
+            }
+        })();
+        $(document).ready(function () {
+            Coordinator.init();
+        });
+    </script>
+</body>
+</html>
