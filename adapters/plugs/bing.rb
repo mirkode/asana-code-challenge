@@ -7,7 +7,7 @@ class Bing
     ].join
   end
 
-  def parsed_response(response)
+  def parse_response(response)
     # ...
   end
 end

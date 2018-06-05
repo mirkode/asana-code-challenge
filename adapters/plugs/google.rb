@@ -7,7 +7,7 @@ class Google
     response.dig("status") == "ZERO_RESULTS"
   end
 
-  def parsed_response(response)
+  def parse_response(response)
     response["results"].map do |result|
       {
         latitude:  result["geometry"]["location"]["lat"],

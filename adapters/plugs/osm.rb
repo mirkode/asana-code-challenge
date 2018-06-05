@@ -7,7 +7,7 @@ class OSM
     response.empty?
   end
 
-  def parsed_response(response)
+  def parse_response(response)
     response.map do |result|
       {
         latitude:  result["lat"].to_f,

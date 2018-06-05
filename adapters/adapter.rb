@@ -31,7 +31,7 @@ class Adapter
       if success
         raise GeoCodingError.new("No results") if provider.has_no_results?(response)
 
-        locations << provider.parsed_response(response)
+        locations << provider.parse_response(response)
       end
     rescue GeoCodingError => e
       errors << {provider: @provider, message: e.message}
