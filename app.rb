@@ -1,7 +1,8 @@
 require 'sinatra/base'
+require 'dotenv'
 
 class Coordinator < Sinatra::Base
-  set :root, File.dirname(__FILE__)
+  Dotenv.load
 
   run! if app_file == $0
 end
