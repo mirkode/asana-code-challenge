@@ -17,8 +17,8 @@ RSpec.describe "API Request", type: :request do
 
     it 'should provide a proper error message' do
       get '/search'
-      expect(JSON.parse(last_response.body)['error'])
-        .to eq('Please provide an address to look for.')
+      expect(JSON.parse(last_response.body)['errors'])
+        .to eq([{'message' => 'Please provide a geocodable search query (e.g. an address)'}])
     end
   end
 

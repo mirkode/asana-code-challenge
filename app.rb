@@ -1,5 +1,6 @@
 require 'sinatra/base'
 require 'dotenv'
+
 require_relative 'adapters/adapter'
 
 class Coordinator < Sinatra::Base
@@ -11,7 +12,9 @@ class Coordinator < Sinatra::Base
 
   get '/search' do
     unless params[:address]
-      halt 400, {error: 'Please provide an address to look for.'}.to_json
+      halt 400, {errors: [
+                   message: 'Please provide a geocodable search query (e.g. an address)'
+                 ]}.to_json
     else
       Adapter.new(params[:address], params[:provider]).get_coordinates
     end
