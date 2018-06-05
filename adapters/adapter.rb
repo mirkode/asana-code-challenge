@@ -19,19 +19,6 @@ class Adapter
     @provider = provider || ENV['DEFAULT_PROVIDER'].to_sym
   end
 
-  def parsed_url(path)
-    URI.parse(URI.escape(path))
-  end
-
-  def api_call(method, path, data = nil)
-    result = self.class.send(method, parsed_url(path), body: data&.to_json || '')
-    raise GeoCodingError.new("HTTP Error #{result.code}, Path: #{result.request.path}") unless [200, 201, 404, 422].include?(result.code)
-    {
-      status: result.code,
-      body: JSON.parse(result.body)
-    }
-  end
-
   def get_coordinates
     locations = []
     errors = []
@@ -57,8 +44,22 @@ class Adapter
     }.to_json
   end
 
-  def get(path)
-    result = api_call(:get, path)
-    [result[:body], result[:status] == 200]
-  end
+  private
+    def parsed_url(path)
+      URI.parse(URI.escape(path))
+    end
+
+    def api_call(method, path, data = nil)
+      result = self.class.send(method, parsed_url(path), body: data&.to_json || '')
+      raise GeoCodingError.new("HTTP Error #{result.code}, Path: #{result.request.path}") unless [200, 201].include?(result.code)
+      {
+        status: result.code,
+        body: JSON.parse(result.body)
+      }
+    end
+
+    def get(path)
+      result = api_call(:get, path)
+      [result[:body], result[:status] == 200]
+    end
 end
