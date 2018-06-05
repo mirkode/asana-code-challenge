@@ -1,0 +1,31 @@
+[{
+    "place_id": "4158275",
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+    "osm_type": "node",
+    "osm_id": "417346627",
+    "boundingbox": [
+        "52.5074959",
+        "52.5075959",
+        "13.3903185",
+        "13.3904185"
+    ],
+    "lat": "52.5074434",
+    "lon": "13.3903913",
+    "display_name": "Checkpoint Charlie, 43-45, Friedrichstraße, Mitte, Berlin, 10969, Deutschland",
+    "class": "tourism",
+    "type": "attraction",
+    "importance": 0.28397275127498,
+    "icon": "https://nominatim.openstreetmap.org/images/mapicons/poi_point_of_interest.p.20.png",
+    "address": {
+        "attraction": "Checkpoint Charlie",
+        "house_number": "43-45",
+        "road": "Friedrichstraße",
+        "suburb": "Mitte",
+        "city_district": "Mitte",
+        "city": "Berlin",
+        "state": "Berlin",
+        "postcode": "10969",
+        "country": "Deutschland",
+        "country_code": "de"
+    }
+}]
