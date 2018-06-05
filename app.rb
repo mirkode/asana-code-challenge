@@ -6,22 +6,19 @@ require_relative 'adapters/adapter'
 class Coordinator < Sinatra::Base
   Dotenv.load
 
-  before do
-    content_type :json
-  end
-
+  # API
   get '/search' do
     unless params[:address]
-      halt 400, {errors: [
-                   message: 'Please provide a geocodable search query (e.g. an address)'
-                 ]}.to_json
+      error = {errors: [message: 'Please provide a geocodable search query (e.g. an address)']}
+      halt 400, {'Content-Type' => 'application/json'}, error.to_json
     else
       Adapter.new(params[:address], params[:provider]).get_coordinates
     end
   end
 
-  after do
-    JSON.dump(response.body)
+  # Simple Demo
+  get '/' do
+    File.read(File.join('public', 'index.html'))
   end
 
   run! if app_file == $0

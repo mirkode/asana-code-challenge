@@ -28,7 +28,7 @@ Fire up the app in the `asana-code-challenge` directory by entering
 `rackup -p 4567` (or any other port you need)
 
 7. Access
-In a browser open up `http://localhost:4567/test`
+In a browser open up `http://localhost:4567/`
 
 ## Request
 The request itself is really simple. Two `GET` parameters can be given:
