@@ -62,7 +62,44 @@ The app consists of multiple files.
    └- ... (test-suite)
 ```
 
-The `app.rb` includes two routes. One is the simple API `GET` endpoint, the other one just shows the demo page (`index.html`)
+#### General
+The `app.rb` includes two routes. One is the simple API `GET` endpoint, the other one just shows the demo page (`index.html`).
+The app itself is structure in such a way so multiple external API providers can be used.
+The `Adapter` object (`adapter.rb`) handles all requests regardless of the provider. It gets initialized with a `query` (e.g. the address) and an optional `provider` (e.g. Google). If no provider is passed in, the default provider as specified in the `.env` file will be used.
+The `Adapter` class includes `HTTParty` and inherits its methods. That allows us to call `get(url)` in the `Adapter` class.
+After initialization we call `.get_coordinates` on the `Adapter` object. This causes the object to instantiate a new Provider object (with the given provider name) and retrieves the provider specific endpoint.
+_Please note:_ The provider name in the `.env` file must match case sensitively the name of the respective `'Plug'` class.
+Having retrieved the endpoint the `Adapter` object now fires an internal `get` method, which again fires the internal `api_call` method.
+The `get` method returns two values: the `response` and wether the request was a `success` or not.
+If it was successful the response is checked for results. If there aren't any, a `GeoCodingError` is raised with the error message `no results`. This handles invalid and/or non-existant addresses.
+If there are results, those get parsed in a provider-specific and returned in a standardized manner, because obviously each provider responses looks differently.
+This results in a consistent API output, regardless of which provider is used.
+The `GET` request itself is quite straight forward. As mentioned before the `get` method calls the internal `api_call` method.
+The `api_call` uses the `HTTParty` method to connect to the external API endpoint (as passed through the provider-specific `Plug`).
+Unless the returned HTTP status code from `HTTParty` does not match `200` a `GeoCodingError` is raised.
+If it matches the `success` status code the status code as well as the raw response gets returned and returned as the `response` variable by the `get` method.
+
+#### Plugs
+I mentioned the `Plugs` twice in the section above.
+A `Plug` is serving the provider-specific logic and handles the authorization, endpoint construction, and response parsing for every needed API endpoint.
+Those are located in the `plugs` folder within the `adapters` folder.
+If you need a new external API endpoint three methods are mandatory:
+1. `endpoint`: here you would need to create the endpoint URL as given by the provider (the return value would be something like "https://maps.googleapis.com/maps/api/geocode/json?address=SEARCH_QUERY&key=GOOGLE_API_KEY").
+2. `has_no_results?(response)`: here the response gets checked if it has any results. This needs to be adjusted to the API response of the external provider and return either `true|false`.
+3. `parse_response(response)`: in this method the response needs to be parsed and a standardized JSON needs to be returned. Please see the format of the JSON below:
+
+```javascript
+{
+  'latitude': 52.0000000,
+  'longitude': 13.000000,
+  'formatted': '<the formatted address>',
+  'type': '<the location type (e.g. recreational)>'
+}
+```
+
+In order to use this `plug` all that needs to be done is to require it in the `adapter.rb` file and then be either passed as a `GET` param, or set as a default in the `.env` file (resp. in the specific `ENV` variable).
+
+Even if there is a use case to try and find really every address/location, also a loop over all providers (e.g. using something like `Threads` and `Mutex` or so) would be possible in the `get_coordinates` method. Instead of firing one `GET` request to one provider, one could loop over all providers, fire a `GET` request, parse the response, add it to the locations and then, when all providers have been accessed, sort the `locations` array and remove duplicates.
 
 ## Set Up
 1. Clone the directory
