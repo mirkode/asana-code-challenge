@@ -29,7 +29,7 @@ class Adapter
       response, success = get provider.endpoint(@query)
 
       if success
-        raise(GeoCodingError, "No results") if provider.has_no_results?(response)
+        raise GeoCodingError.new("No results") if provider.has_no_results?(response)
 
         locations << provider.parsed_response(response)
       end
@@ -51,7 +51,7 @@ class Adapter
 
     def api_call(method, path, data = nil)
       result = self.class.send(method, parsed_url(path), body: data&.to_json || '')
-      raise GeoCodingError.new("HTTP Error #{result.code}, Path: #{result.request.path}") unless [200, 201].include?(result.code)
+      raise GeoCodingError.new("HTTP Error #{result.code}, Path: #{result.request.path}, Response: #{result.body}") unless [200, 201].include?(result.code)
       {
         status: result.code,
         body: JSON.parse(result.body)
