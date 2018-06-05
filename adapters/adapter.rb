@@ -16,7 +16,7 @@ class Adapter
 
   def initialize(query, provider = nil)
     @query = query
-    @provider = provider || :Google
+    @provider = provider || ENV['DEFAULT_PROVIDER'].to_sym
   end
 
   def parsed_url(path)
