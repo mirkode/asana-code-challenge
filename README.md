@@ -1,4 +1,5 @@
-# Coordinat0r - Code Challenge Project (WIP)
+# Coordinat0r - Code Challenge Project
+For the set up directly jump to [Set Up](#set-up)
 
 * [Description](#description)
 * [Design Decisions](#design-decisions)
