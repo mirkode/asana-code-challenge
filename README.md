@@ -102,44 +102,44 @@ In order to use this `plug` all that needs to be done is to require it in the `a
 Even if there is a use case to try and find really every address/location, also a loop over all providers (e.g. using something like `Threads` and `Mutex` or so) would be possible in the `get_coordinates` method. Instead of firing one `GET` request to one provider, one could loop over all providers, fire a `GET` request, parse the response, add it to the locations and then, when all providers have been accessed, sort the `locations` array and remove duplicates.
 
 ## Set Up
-1. Clone the directory
-`git clone https://github.com/mirkode/asana-code-challenge.git`
+1. Clone the directory.  
+   `git clone https://github.com/mirkode/asana-code-challenge.git`
 
-2. `cd` into repository
-`cd asana-code-challenge`
+2. `cd` into repository.  
+   `cd asana-code-challenge`
 
-3. Copy .env.example to .env
-`cp .env.example .env`
+3. Copy `.env.example` to `.env`.  
+   `cp .env.example .env`
 
-4. Modify `.env` file
-`vim .env`
+4. Modify `.env` file.  
+   `vim .env`
 
-5. Insert all needed API endpoints, keys, and data _(more on this below)_
-`DEFAULT` = Insert your desired default provider (for me that is Google)
-e.g. `GOOGLE_API_KEY` = Your Google Maps API key
+5. Insert all needed API endpoints, keys, and data _(more on this below)_.  
+   `DEFAULT` = Insert your desired default provider (for me that is Google).  
+   e.g. `GOOGLE_API_KEY` = Your Google Maps API key
 
-6. Start Up
-Fire up the app in the `asana-code-challenge` directory by entering
-`rackup -p 4567` (or any other port you need)
+6. Start Up.  
+   Fire up the app in the `asana-code-challenge` directory by entering
+   `rackup -p 4567` (or any other port you need)
 
-7. Add Google Maps API key to `index.html`.
-Scroll to the bottom to the `index.html` page or search for `<!-- ADD GOOGLE MAPS API KEY HERe -->`.
-Replace `YOUR API KEY HERE` with your Google Maps API key, uncomment the script block and save the file.
-In case you have forgotten this, there will be a little alert popping up. 
-As this is an acceptable solution if this app would be on production, please also delete the following lines:
+7. Add Google Maps API key to `index.html`.  
+   Scroll to the bottom to the `index.html` page or search for `<!-- ADD GOOGLE MAPS API KEY HERe -->`.  
+   Replace `YOUR API KEY HERE` with your Google Maps API key, uncomment the script block and save the file.  
+   In case you have forgotten this, there will be a little alert popping up.  
+   As this is an acceptable solution if this app would be on production, please also delete the following lines:
 
-```javascript
-153   // Just a quickfix for development only.
-154   // TODO: remove
-155   setTimeout(function () {
-156     if (typeof(map) === 'undefined') {
-157       alert('Cannot load the map.\nDid you forget to set the API key in the index.html?\nPlease add it, otherwise the app won\'t function properly.');
-158     }
-159   }, 500);
-```
+   ```javascript
+   153   // Just a quickfix for development only.
+   154   // TODO: remove
+   155   setTimeout(function () {
+   156     if (typeof(map) === 'undefined') {
+   157       alert('Cannot load the map.\nDid you forget to set the API key in the index.html?\nPlease add it, otherwise the app won\'t function properly.');
+   158     }
+   159   }, 500);
+   ```
 
-8. Access
-In a browser open up `http://localhost:4567/`
+8. Access.  
+   In a browser open up `http://localhost:4567/`
 
 ## Request
 The request itself is really simple. Two `GET` parameters can be given:
