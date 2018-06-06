@@ -1,29 +1,49 @@
 # Coordinat0r - Code Challenge Project (WIP)
 
+* [Description](#description)
+* [Design Decisions](#design-decisions)
+  * [Framework](#framework)
+  * [Network](#network)
+  * [Configuration](#configuration)
+  * [Testing](#testing)
+  * [Why jQuery?!](#why-jquery)
+  * [Error Handling](#error-handling)
+  * [Authorization](#authorization)
+* [Structure](#structure)
+  * [General](#general)
+  * [Plugs](#plugs)
+* [Set Up](#set-up)
+* [Requests](#requests)
+* [Responses](#responses)
+  * [Success](#success)
+  * [No Results](#no-results)
+  * [Malformed Request](#malformed-request)
+  * [Other](#other)
+
 ## Description
 This is a little code challenge project I've built.  
 The main task of this mini app is to run as a super simple and light-weight server app that provides a "standardized" geolocation API.
 The app is accessible via a basic-authenticated GET request.  
 The token credentials are hardcoded for now and for the sake of simplicity, but should be swapped if ever used in a production or any other environment other than locally.
 
-### Design Decisions
+## Design Decisions
 Some thoughts on this app:  
 Please bare with me as I had to keep the developing time on this little thing quite low.
 
-#### Framework
+### Framework
 To keep it light-weight, yet having some benefits of a framework, Sinatra was chosen.  
 Rails for example would be way too blown up for such a little web app, so I decided that Sinatra has a perfect scope for this task.  
 Besides that I don't often get the chance to build something with Sinatra, so it is nice to dive into the differences from time to time.  
 
-#### Network
+### Network
 As an HTTP library I chose `HTTParty` over the built-in `Net::HTTP` library, because unfortunately `Net::HTTP` is way too cumbersome to use in my opinion.
 
-#### Configuration
+### Configuration
 The configuration is mainly handled via `ENV` variables. I find this approach one of the easiest to handle as you don't need a deploy if one of those values need to change.  
 The `dotenv` gem is a nice and convenient way to include one or more configuration files (e.g. one per environment), containing all necessary info such as API keys.  
 Providers like Heroku make it easy to change `ENV` variables on the fly without fiddling with extra files.
 
-#### Testing
+### Testing
 Even though RSpec might be a little heavy for this app, I chose it mainly because tests can become very unreadable, very quickly.  
 So I find that RSpec and its matchers keep the spec structure nicely readable.  
 And my experience level with RSpec is higher than with other test frameworks, such as e.g. Minitest.  
@@ -31,25 +51,25 @@ Right now there are only `request specs` so far (as I considered them the most i
 But one or two unit tests might follow to make sure that the provider specific responses are parsed correctly and the API output is consistent.  
 Maybe also some basic integration tests for the demo app will follow up.
 
-#### Why jQuery?!
+### Why jQuery?!
 I would have loved to build this low-tech front-end in Vue with all the nice stuff that comes with it!  
 But that would have really been too much. So I decided to keep it oldschool.  
 Just plain and simple HTML, CSS and JavaScript/jQuery (for the ajaxy stuff).  
 
-#### Error handling
+### Error handling
 The API adapter has an own `GeoCodingError` class. It gets raised on two occasions:  
 Either when there are no results, or when there is a HTTP status code that is *neither* `200`, *nor* `291` (so e.g. `404`, `401`, etc.).  
 In case of no results being returned, the response JSON includes the name of the provider and the error message `No results.`.  
 In case of an errorneous HTTP status, the response JSON includes the `HTTP status code`, the `request path`, as well as the `response` from the external API.
 
-#### Authorization
+### Authorization
 To start with, I included some very basic authentication. First I was thinking of JWT and such, but that would have maybe gone beyond the scope.  
 So, right now there is a username and password hardcoded in the demo app, which gets encoded in a base64 ASCII string. This string is then used as a token and verified on the backend side to  
 a.) exist  
 b.) match the credentials from the front-end.  
 In production I would probably generate a proper JWT for each app that wants to access the API and then match it against the records in the database for that particular token.
 
-#### Structure
+## Structure
 The app consists of multiple files.  
 ```
 ├- app.rb - (the main entry point)
@@ -69,7 +89,7 @@ The app consists of multiple files.
    └- ... (test-suite)
 ```
 
-#### General
+### General
 The `app.rb` includes two routes. One is the simple API `GET` endpoint, the other one just shows the static demo page (`index.html`).  
 The app itself is structure in such a way so multiple external API providers can be used.  
 The `Adapter` object (`adapter.rb`) handles all requests regardless of the provider. It gets initialized with a `query` (e.g. the address) and an optional `provider` (e.g. Google). If no provider is passed in, the default provider, as specified in the `.env` file, will be used.  
@@ -86,7 +106,7 @@ The `api_call` uses the respective `HTTParty` method to connect to the external 
 Unless the returned HTTP status code from `HTTParty` does not match `200` a `GeoCodingError` is raised.  
 If it matches the `success` status code, the status code, as well as the raw response, gets returned as the `response` variable by the `get` method.
 
-#### Plugs
+### Plugs
 I mentioned the `Plugs` twice in the section above.  
 A `Plug` is serving the provider-specific logic and handles the authorization, endpoint construction, and response parsing for every needed API endpoint.  
 Those are located in the `plugs` folder within the `adapters` folder.  
@@ -147,12 +167,12 @@ Even if there is a use case to try and find really every address/location by usi
 8. Access.  
    In a browser open up `http://localhost:4567/`
 
-## Request
+## Requests
 The request itself is really simple. Two `GET` parameters can be given:
 * `address`: This is the address string
 * `provider`: This is one of multiple providers
 
-## Response
+## Responses
 You can have one out of multiple JSON responses.  
 
 ### Success
