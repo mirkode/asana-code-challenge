@@ -185,27 +185,39 @@
 
             var showResults = function (data) {
                 parsedData = JSON.parse(data)
-                coordinates = parsedData.coordinates[0];
-                currentPosition = {lat: coordinates.latitude, lng: coordinates.longitude};
 
-                $button.attr('disabled', false);
-                $count.html(parsedData.coordinates.length);
-                $results.html('');
-                $.each(parsedData.coordinates, function(index, dataset) {
-                    var element = '<li>';
-                    element += '<p>Latitude: ' + dataset.latitude + '</p>';
-                    element += '<p>Longitude: ' + dataset.longitude + '</p>';
-                    element += '<p>Formatted Address:<br>' + dataset.formatted + '</p>';
-                    element += '</li>';
-                    $results.append(element);
-                });
-                $code.text(data);
+                // If there are any errors, coming from the external provider
+                // themselves (e.g. a Bad Request), show them
+                if (parsedData.errors.length) {
+                    $error.html('');
+                    parsedData.errors.forEach(function (error) {
+                        console.error(error);
+                        var provider = error.provider ? '<strong>' + error.provider + ' said:</strong> ' : '';
+                        $error.append(provider + error.message);
+                        $error.show();
+                    });
+                } else {
+                    coordinates = parsedData.coordinates[0];
+                    currentPosition = {lat: coordinates.latitude, lng: coordinates.longitude};
 
-                $status.fadeIn('slow');
-                map.setCenter(currentPosition);
-                marker.setPosition(currentPosition);
+                    $button.attr('disabled', false);
+                    $count.html(parsedData.coordinates.length);
+                    $results.html('');
+                    $.each(parsedData.coordinates, function(index, dataset) {
+                        var element = '<li>';
+                        element += '<p>Latitude: ' + dataset.latitude + '</p>';
+                        element += '<p>Longitude: ' + dataset.longitude + '</p>';
+                        element += '<p>Formatted Address:<br>' + dataset.formatted + '</p>';
+                        element += '</li>';
+                        $results.append(element);
+                    });
+                    $code.text(data);
+
+                    $status.fadeIn('slow');
+                    map.setCenter(currentPosition);
+                    marker.setPosition(currentPosition);
+                }
             };
-
             return {
                 init: init
             }
