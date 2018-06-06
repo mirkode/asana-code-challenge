@@ -122,7 +122,21 @@ e.g. `GOOGLE_API_KEY` = Your Google Maps API key
 Fire up the app in the `asana-code-challenge` directory by entering
 `rackup -p 4567` (or any other port you need)
 
-7. Add Google Maps API key to `index.html`
+7. Add Google Maps API key to `index.html`.
+Scroll to the bottom to the `index.html` page or search for `<!-- ADD GOOGLE MAPS API KEY HERe -->`.
+Replace `YOUR API KEY HERE` with your Google Maps API key, uncomment the script block and save the file.
+In case you have forgotten this, there will be a little alert popping up. 
+As this is an acceptable solution if this app would be on production, please also delete the following lines:
+
+```javascript
+153   // Just a quickfix for development only.
+154   // TODO: remove
+155   setTimeout(function () {
+156     if (typeof(map) === 'undefined') {
+157       alert('Cannot load the map.\nDid you forget to set the API key in the index.html?\nPlease add it, otherwise the app won\'t function properly.');
+158     }
+159   }, 500);
+```
 
 8. Access
 In a browser open up `http://localhost:4567/`
