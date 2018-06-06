@@ -150,6 +150,14 @@
                 $error = $('#error');
 
             var init = function () {
+                // Just a quickfix for development only.
+                // TODO: remove
+                setTimeout(function () {
+                    if (typeof(map) === 'undefined') {
+                        alert('Cannot load the map.\nDid you forget to set the API key in the index.html?\nPlease add it, otherwise the app won\'t function properly.');
+                    }
+                }, 500);
+
                 $('#address-form').on('submit', function (e) {
                     e.preventDefault();
                     $button.attr('disabled', true);
