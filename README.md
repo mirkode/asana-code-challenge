@@ -172,6 +172,10 @@ The request itself is really simple. Two `GET` parameters can be given:
 * `address`: This is the address string
 * `provider`: This is one of multiple providers
 
+Example:  
+`http://localhost:4567/search?address=Checkpoint+Charlie&provider=OSM` - uses the API of OpenStreetMap  
+`http://localhost:4567/search?address=Checkpoint+Charlie` - uses the API of the default provider as specified in the `.env` file.
+
 ## Responses
 You can have one out of multiple JSON responses.  
 
